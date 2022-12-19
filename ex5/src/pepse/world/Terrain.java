@@ -16,11 +16,13 @@ public class Terrain {
     private final GameObjectCollection gameObjects;
     private final int groundLayer;
     private final float groundHeightAtX0;
+    private int height;
 
     public Terrain(GameObjectCollection gameObjects, int groundLayer, Vector2 windowDimensions, int seed) {
         this.groundLayer = groundLayer;
         this.gameObjects = gameObjects;
         this.groundHeightAtX0 = (float) (windowDimensions.y() * GROUND_RADIO);
+        this.height = (int) windowDimensions.y();
     }
 
     public float groundHeightAt(float x) {
@@ -34,10 +36,10 @@ public class Terrain {
         int y;
         RectangleRenderable render = new RectangleRenderable(BASE_GROUND_COLOR);
         for (int x = startX; x < endX; x += Block.SIZE) {
-            y= calcTopY(x);
-            for ( int i= 0; i < TERRAIN_DEPTH ; i++) {
-                y-=Block.SIZE;
-                block = createBlock(new Vector2(x, y), render);
+            y = calcTopY(x);
+            for (int i = 0; i < TERRAIN_DEPTH; i++) {
+                y -= Block.SIZE;
+                block = createBlock(new Vector2(x, height - y), render);
                 gameObjects.addGameObject(block, groundLayer);
                 block.setTag(BLOCK_TAG);
             }
