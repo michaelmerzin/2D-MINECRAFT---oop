@@ -3,33 +3,63 @@ package pepse.world;
 import danogl.collisions.GameObjectCollection;
 import danogl.collisions.Layer;
 import danogl.gui.rendering.RectangleRenderable;
+import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 
 import java.awt.*;
 
 public class Terrain {
-    private static final Color BASE_GROUND_COLOR=new Color(212,123,73);
-    private static final float GROUND_RADIO=1/3;
-    private static final String BLOCK_TAG="ground";
-    private  final GameObjectCollection gameObjects;
+    private static final Color BASE_GROUND_COLOR = new Color(212, 123, 73);
+    private static final double GROUND_RADIO = 0.3;
+    private static final int TERRAIN_DEPTH = 20;
+    private static final String BLOCK_TAG = "ground";
+    private final GameObjectCollection gameObjects;
     private final int groundLayer;
     private final float groundHeightAtX0;
 
-
-
-    public Terrain(GameObjectCollection gameObjects, int groundLayer, Vector2 windowDimensions,int seed)
-    {
-        this.groundLayer=groundLayer;
-        this.gameObjects=gameObjects;
-        this.groundHeightAtX0=windowDimensions.y()*GROUND_RADIO;
+    public Terrain(GameObjectCollection gameObjects, int groundLayer, Vector2 windowDimensions, int seed) {
+        this.groundLayer = groundLayer;
+        this.gameObjects = gameObjects;
+        this.groundHeightAtX0 = (float) (windowDimensions.y() * GROUND_RADIO);
     }
-    public float GroundHeightAt(float x)
-    {return groundHeightAtX0;}
-    public void createInRange(int minX,int maxX)
-    {
-        RectangleRenderable render=new RectangleRenderable(BASE_GROUND_COLOR);
-        Block block = new Block(new Vector2(minX,maxX),render);
-        gameObjects.addGameObject(block, Layer.STATIC_OBJECTS);
-        block.setTag(BLOCK_TAG);
+
+    public float groundHeightAt(float x) {
+        return groundHeightAtX0;
+    }
+
+    public void createInRange(int minX, int maxX) {
+        int startX = calcStart(minX);
+        int endX = calcEnd(maxX);
+        Block block;
+        int y;
+        RectangleRenderable render = new RectangleRenderable(BASE_GROUND_COLOR);
+        for (int x = startX; x < endX; x += Block.SIZE) {
+            y= calcTopY(x);
+            for ( int i= 0; i < TERRAIN_DEPTH ; i++) {
+                y-=Block.SIZE;
+                block = createBlock(new Vector2(x, y), render);
+                gameObjects.addGameObject(block, groundLayer);
+                block.setTag(BLOCK_TAG);
+            }
+        }
+
+
+    }
+
+    private int calcTopY(int x) {
+        return (int) (Math.floor(groundHeightAt(x) / Block.SIZE) * Block.SIZE);
+    }
+
+    private int calcStart(int start) {
+        return start - (start % Block.SIZE);
+
+    }
+
+    private int calcEnd(int end) {
+        return end + (end % Block.SIZE);
+    }
+
+    private Block createBlock(Vector2 cords, Renderable renderable) {
+        return new Block(cords, renderable);
     }
 }
