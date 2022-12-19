@@ -26,7 +26,7 @@ public class Terrain {
     }
 
     public float groundHeightAt(float x) {
-        return groundHeightAtX0;
+        return groundHeightAtX0;//TODO
     }
 
     public void createInRange(int minX, int maxX) {
