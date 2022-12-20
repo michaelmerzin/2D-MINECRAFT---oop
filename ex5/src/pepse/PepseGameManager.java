@@ -25,6 +25,8 @@ public class PepseGameManager extends GameManager {
     private static final Color HALO_COLOR=Color.RED;
 
 
+
+
     @Override
     public void initializeGame(ImageReader imageReader,
                                SoundReader soundReader, UserInputListener inputListener,
@@ -45,6 +47,7 @@ public class PepseGameManager extends GameManager {
         super.update(deltaTime);
 
     }
+
 
     public static void main(String[] args) {
         new PepseGameManager().run();

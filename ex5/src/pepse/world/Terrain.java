@@ -16,16 +16,22 @@ public class Terrain {
     private final GameObjectCollection gameObjects;
     private final int groundLayer;
     private final float groundHeightAtX0;
-    private float height;
+    private final float height;
+    private final int seed;
+
 
     public Terrain(GameObjectCollection gameObjects, int groundLayer, Vector2 windowDimensions, int seed) {
         this.groundLayer = groundLayer;
         this.gameObjects = gameObjects;
         this.groundHeightAtX0 = (float) (windowDimensions.y() * GROUND_RADIO);
         this.height =  windowDimensions.y();
+        this.seed=seed;
+
+
     }
 
     public float groundHeightAt(float x) {
+//        return (float) noise( x, groundHeightAtX0);
         return groundHeightAtX0;//TODO
     }
 
