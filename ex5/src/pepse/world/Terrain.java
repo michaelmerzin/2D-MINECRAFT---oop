@@ -16,13 +16,13 @@ public class Terrain {
     private final GameObjectCollection gameObjects;
     private final int groundLayer;
     private final float groundHeightAtX0;
-    private int height;
+    private float height;
 
     public Terrain(GameObjectCollection gameObjects, int groundLayer, Vector2 windowDimensions, int seed) {
         this.groundLayer = groundLayer;
         this.gameObjects = gameObjects;
         this.groundHeightAtX0 = (float) (windowDimensions.y() * GROUND_RADIO);
-        this.height = (int) windowDimensions.y();
+        this.height =  windowDimensions.y();
     }
 
     public float groundHeightAt(float x) {

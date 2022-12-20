@@ -36,8 +36,8 @@ public class PepseGameManager extends GameManager {
         ground.createInRange(0, (int) windowController.getWindowDimensions().x());
         GameObject night = Night.create(gameObjects(), Layer.FOREGROUND, windowController.getWindowDimensions(), CYCLE_LENGTH);
         GameObject sun= Sun.create(gameObjects(),Layer.BACKGROUND+1,windowController.getWindowDimensions(),CYCLE_LENGTH);
-        GameObject halo= SunHalo.create(gameObjects(),Layer.BACKGROUND,sun,HALO_COLOR);
-
+        GameObject halo= SunHalo.create(gameObjects(),Layer.BACKGROUND+11,sun,HALO_COLOR);
+        halo.addComponent((deltaTime -> halo.setCenter(sun.getCenter())));
     }
 
     @Override

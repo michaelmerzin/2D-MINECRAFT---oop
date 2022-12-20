@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 public class Sun {
     private static final Color SUN_COLOR = Color.YELLOW;
     private static final String SUN_TAG = "sun";
-    private static final float SUN_RADIO=0.12f;
+    private static final float SUN_RADIO = 0.12f;
     private static final float SUN_HEIGHT=150;
     private static final float SUN_ROTATION = (float) (2*Math.PI);
 
@@ -27,11 +27,12 @@ public class Sun {
         sun.setCoordinateSpace(CoordinateSpace.CAMERA_COORDINATES);
         gameObjects.addGameObject(sun, Layer);
         sun.setTag(SUN_TAG);
-        Consumer<Float> sunVector=(angel)-> sun.setCenter(calcSunPosition(windowDimensions,angel));
-//        Transition<Float> transitionForDarkness = new Transition<Float>(sun,sunVector,
-//                0f, SUN_ROTATION,
-//                Transition.LINEAR_INTERPOLATOR_FLOAT,
-//                cycleLength, Transition.TransitionType.TRANSITION_BACK_AND_FORTH, null);
+        Consumer<Float> sunVector=(angel)->
+                sun.setCenter(sun.getCenter().add(calcSunPosition(windowDimensions,angel)));
+        Transition<Float> transitionForDarkness = new Transition<Float>(sun,sunVector,
+                0f, SUN_ROTATION/2,
+                Transition.LINEAR_INTERPOLATOR_FLOAT,
+                cycleLength, Transition.TransitionType.TRANSITION_BACK_AND_FORTH, null);
         return sun;
 
     }
@@ -41,9 +42,6 @@ public class Sun {
         float x = (float) (Math.cos(angel)+Math.sin(angel));
         float y = (float) (Math.cos(angel)-Math.sin(angel));
         return new Vector2(x,y);
-
-
-
     }
 
 
