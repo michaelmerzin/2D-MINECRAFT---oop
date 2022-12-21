@@ -1,5 +1,6 @@
 package pepse.world.trees;
 
+import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.components.ScheduledTask;
 import danogl.components.Transition;
@@ -77,23 +78,22 @@ public class Tree {
                 block = createBlock(new Vector2(x - w * Block.SIZE, height - h - (TREE_HEIGHT - 1) * Block.SIZE), render);
                 gameObjects.addGameObject(block, treeLayer);
 
-
+                Transition<Float> transitionForMoveLeaves = new Transition<Float>((GameObject) block, block.renderer()::setRenderableAngle,
+                        0f, 10f,
+                        Transition.CUBIC_INTERPOLATOR_FLOAT,
+                        CYCLE_LENGTH, Transition.TransitionType.TRANSITION_BACK_AND_FORTH, null);
 
                 Block finalBlock = block;
-                int rand_int1 = rand.nextInt(10);
-                new ScheduledTask(block, rand_int1, true, new Runnable() {
+                int leavesLifeTime = rand.nextInt(10);// after that time the leave starting to move and fade.
+                new ScheduledTask(block, leavesLifeTime, true, new Runnable() {
                     @Override
                     public void run() {
-
+                        int leaves_Movement = rand.nextInt(20);
                         finalBlock.renderer().fadeOut(FADE_OUT_TIME);
-
+                        finalBlock.transform().setVelocityY(30);
                     }
-                });
-//                Transition<Float> transitionForLeavesSize = new Transition<Float>(block, block::setDimensions(),
-//                        block.getDimensions(), new Vector2(30,30),
-//                        Transition.CUBIC_INTERPOLATOR_FLOAT,
-//                        CYCLE_LENGTH, Transition.TransitionType.TRANSITION_BACK_AND_FORTH, null);
-
+                }
+                );
                 block.setTag(LEAVES_TAG);
 
             }
