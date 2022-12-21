@@ -1,6 +1,8 @@
 package pepse.world.trees;
 
 import danogl.collisions.GameObjectCollection;
+import danogl.components.ScheduledTask;
+import danogl.components.Transition;
 import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
@@ -8,6 +10,7 @@ import pepse.world.Block;
 import pepse.world.Terrain;
 
 import java.awt.*;
+import java.util.Random;
 import java.util.function.Function;
 
 public class Tree {
@@ -15,23 +18,25 @@ public class Tree {
     private static final int TREE_HEIGHT = 4;
     private static final Color COLOR_OF_TREE = new Color(100, 50, 20);
     private static final Color COLOR_OF_LEAVES = new Color(50, 200, 30);
-    private final Function<Float,Float> heightAtX;
-    private final int LEAVES_START=-2;
-    private final int LEAVES_END=3;
-    private final int LEAVES_HEIGHT=4;
+    private final Function<Float, Float> heightAtX;
+    private final int LEAVES_START = -2;
+    private final int LEAVES_END = 3;
+    private final int LEAVES_HEIGHT = 4;
+    private static final float CYCLE_LENGTH = 3;
 
     private static final String TRUNK_TAG = "trunk";
     private static final String LEAVES_TAG = "leaves";
+    private static final int FADE_OUT_TIME = 4;
     private final GameObjectCollection gameObjects;
     private final int treeLayer;
     private final float height;
+    private final Random rand = new Random();
 
-    public Tree(GameObjectCollection gameObjects, int treeLayer, Vector2 windowDimensions, Function<Float,Float> heightAtX)
-    {
+    public Tree(GameObjectCollection gameObjects, int treeLayer, Vector2 windowDimensions, Function<Float, Float> heightAtX) {
         this.treeLayer = treeLayer;
         this.gameObjects = gameObjects;
-        this.heightAtX=heightAtX;
-        this.height =  windowDimensions.y();
+        this.heightAtX = heightAtX;
+        this.height = windowDimensions.y();
     }
 
 
@@ -52,8 +57,7 @@ public class Tree {
         float bottomY = this.heightAtX.apply(x);
         Block block;
         RectangleRenderable render = new RectangleRenderable(COLOR_OF_TREE);
-        for (float y = bottomY; y < bottomY+Block.SIZE*TREE_HEIGHT; y+=Block.SIZE)
-        {
+        for (float y = bottomY; y < bottomY + Block.SIZE * TREE_HEIGHT; y += Block.SIZE) {
             block = createBlock(new Vector2(x, height - y + Block.SIZE), render);
             gameObjects.addGameObject(block, treeLayer);
             block.setTag(TRUNK_TAG);
@@ -63,17 +67,33 @@ public class Tree {
         buildLeaves(x);
 
     }
-    private void buildLeaves(float x)
-    {
+
+    private void buildLeaves(float x) {
         Block block;
         float bottomY = this.heightAtX.apply(x);
         RectangleRenderable render = new RectangleRenderable(COLOR_OF_LEAVES);
-        for(int w =LEAVES_START;w<LEAVES_END;w++)
-        {
-            for(float h=bottomY;h<bottomY+Block.SIZE*LEAVES_HEIGHT;h+=Block.SIZE)
-            {
-                block = createBlock(new Vector2(x-w*Block.SIZE, height - h - (TREE_HEIGHT-1)*Block.SIZE), render);
+        for (int w = LEAVES_START; w < LEAVES_END; w++) {
+            for (float h = bottomY; h < bottomY + Block.SIZE * LEAVES_HEIGHT; h += Block.SIZE) {
+                block = createBlock(new Vector2(x - w * Block.SIZE, height - h - (TREE_HEIGHT - 1) * Block.SIZE), render);
                 gameObjects.addGameObject(block, treeLayer);
+
+
+
+                Block finalBlock = block;
+                int rand_int1 = rand.nextInt(10);
+                new ScheduledTask(block, rand_int1, true, new Runnable() {
+                    @Override
+                    public void run() {
+
+                        finalBlock.renderer().fadeOut(FADE_OUT_TIME);
+
+                    }
+                });
+//                Transition<Float> transitionForLeavesSize = new Transition<Float>(block, block::setDimensions(),
+//                        block.getDimensions(), new Vector2(30,30),
+//                        Transition.CUBIC_INTERPOLATOR_FLOAT,
+//                        CYCLE_LENGTH, Transition.TransitionType.TRANSITION_BACK_AND_FORTH, null);
+
                 block.setTag(LEAVES_TAG);
 
             }
@@ -88,6 +108,7 @@ public class Tree {
     private int calcEnd(int end) {
         return end + (end % Block.SIZE);
     }
+
     private Block createBlock(Vector2 cords, Renderable renderable) {
         return new Block(cords, renderable);
     }
