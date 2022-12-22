@@ -18,9 +18,7 @@ import java.awt.*;
 
 public class PepseGameManager extends GameManager {
     private static final float CYCLE_LENGTH = 30;
-    private static final Color HALO_COLOR=Color.RED;
-
-
+    private static final Color HALO_COLOR = Color.RED;
 
 
     @Override
@@ -33,14 +31,15 @@ public class PepseGameManager extends GameManager {
         Terrain ground = new Terrain(gameObjects(), Layer.STATIC_OBJECTS, windowController.getWindowDimensions(), seed);
         ground.createInRange(0, (int) windowController.getWindowDimensions().x());
         GameObject night = Night.create(gameObjects(), Layer.FOREGROUND, windowController.getWindowDimensions(), CYCLE_LENGTH);
-        GameObject sun= Sun.create(gameObjects(),Layer.BACKGROUND+1,windowController.getWindowDimensions(),CYCLE_LENGTH);
-        GameObject halo = SunHalo.create(gameObjects(),Layer.BACKGROUND+11,sun,HALO_COLOR);
+        GameObject sun = Sun.create(gameObjects(), Layer.BACKGROUND + 1, windowController.getWindowDimensions(), CYCLE_LENGTH);
+        GameObject halo = SunHalo.create(gameObjects(), Layer.BACKGROUND + 11, sun, HALO_COLOR);
         halo.addComponent((deltaTime -> halo.setCenter(sun.getCenter())));
 
-        Tree tree = new Tree(gameObjects(), Layer.BACKGROUND+13,windowController.getWindowDimensions(),
+        Tree tree = new Tree(gameObjects(), Layer.BACKGROUND + 13,Layer.BACKGROUND + 14, windowController.getWindowDimensions(),
                 ground::groundHeightAt);
 
         tree.createInRange(0, (int) windowController.getWindowDimensions().x());
+        Avatar.create(gameObjects(), Layer.FOREGROUND, windowController.getWindowDimensions().mult(0.5f), inputListener, imageReader);
     }
 
     @Override
