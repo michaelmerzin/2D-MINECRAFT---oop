@@ -48,6 +48,10 @@ public class Avatar extends GameObject
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
+        handleMovement();
+    }
+
+    private void handleMovement(){
         float xVel = 0;
         if(inputListener.isKeyPressed(KeyEvent.VK_LEFT))
             xVel -= VELOCITY_X;

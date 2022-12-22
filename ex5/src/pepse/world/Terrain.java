@@ -24,10 +24,8 @@ public class Terrain {
         this.groundLayer = groundLayer;
         this.gameObjects = gameObjects;
         this.groundHeightAtX0 = (float) (windowDimensions.y() * GROUND_RADIO);
-        this.height =  windowDimensions.y();
-        this.seed=seed;
-
-
+        this.height = windowDimensions.y();
+        this.seed = seed;
     }
 
     public float groundHeightAt(float x) {

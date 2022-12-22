@@ -11,11 +11,13 @@ import pepse.world.Block;
 import pepse.world.Terrain;
 
 import java.awt.*;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.Function;
 
 public class Tree {
-    private static final Double UPPER_BOUND = 0.1;
+    private static final int BOUND = 100;
+    private static final int UPPER_BOUND = 10;
     private static final int TREE_HEIGHT = 4;
     private static final Color COLOR_OF_TREE = new Color(100, 50, 20);
     private static final Color COLOR_OF_LEAVES = new Color(50, 200, 30);
@@ -28,30 +30,37 @@ public class Tree {
     private static final String LEAVES_TAG = "leaves";
     private static final int FADE_OUT_TIME = 4;
     private static final int FADE_START_TIME = 200;
+    private static final int LeaveFallSpeed = 30;
+
     private final GameObjectCollection gameObjects;
     private final int treeLayer;
     private final float height;
     private final int leaveLayer;
-    private final Random rand = new Random();
+    private Random rand;
+    private final int seed;
 
 
     public Tree(GameObjectCollection gameObjects, int treeLayer, int leaveLayer,
-                Vector2 windowDimensions, Function<Float, Float> heightAtX) {
+                Vector2 windowDimensions, Function<Float, Float> heightAtX, int seed) {
         this.treeLayer = treeLayer;
         this.leaveLayer = leaveLayer;
         this.gameObjects = gameObjects;
         this.heightAtX = heightAtX;
         this.height = windowDimensions.y();
+        this.rand = new Random();
+        this.seed = seed;
+
     }
 
 
     public void createInRange(int minX, int maxX) {
         int start = calcStart(minX);
         int end = calcEnd(maxX);
-        double rand;
+        int randomNum;
         for (int x = start; x < end; x += Block.SIZE) {
-            rand = Math.random();
-            if (rand <= UPPER_BOUND) {
+            rand = new Random(Objects.hash(x, this.seed));
+            randomNum = rand.nextInt(BOUND);
+            if (randomNum <= UPPER_BOUND) {
                 buildTree(x);
             }
         }
@@ -93,7 +102,7 @@ public class Tree {
         new ScheduledTask(leave, leavesLifeTime, true, new Runnable() {
             @Override
             public void run() {
-                leave.transform().setVelocityY(30);
+                leave.transform().setVelocityY(LeaveFallSpeed);
                 leave.renderer().fadeOut(FADE_OUT_TIME);
 
             }
