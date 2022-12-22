@@ -1,11 +1,12 @@
-package pepse;
+package pepse.world;
 
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.components.ScheduledTask;
 import danogl.gui.ImageReader;
 import danogl.gui.UserInputListener;
-import danogl.gui.rendering.OvalRenderable;
+import danogl.gui.rendering.ImageRenderable;
+import danogl.gui.rendering.RectangleRenderable;
 import danogl.util.Vector2;
 
 import java.awt.*;
@@ -13,18 +14,19 @@ import java.awt.event.KeyEvent;
 
 public class Avatar extends GameObject
 {
-    private static final float VELOCITY_X = 400;
-    private static final float VELOCITY_Y = -650;
+    private static final String avatarImagePath = "animation/avatarImage.jpg";
+    private static final float SIZE_RATIO_TO_BASIC = 50;
+    private static final float VELOCITY_X = 300;
+    private static final float VELOCITY_Y = -300;
     private static final float GRAVITY = 600;
-    private static final Color AVATAR_COLOR = Color.DARK_GRAY;
-    private static final String AVATAR_TAG="Avatar";
+    private static final String AVATAR_TAG= "Avatar";
     private final UserInputListener inputListener;
     private final ImageReader imageReader;
 
     private Avatar(Vector2 pos, UserInputListener inputListener,ImageReader imageReader)
     {
-        super(pos, Vector2.ONES.mult(50), new OvalRenderable(AVATAR_COLOR));
-        physics().preventIntersectionsFromDirection(Vector2.ZERO);
+        super(pos, Vector2.ONES.mult(SIZE_RATIO_TO_BASIC),
+                new ImageRenderable(imageReader.readImage(avatarImagePath,true).getImage()));
         transform().setAccelerationY(GRAVITY);
         this.inputListener = inputListener;
         this.imageReader = imageReader;
@@ -37,8 +39,12 @@ public class Avatar extends GameObject
         Avatar avatar=new Avatar(topLeftCorner,inputListener,imageReader);
         gameObjects.addGameObject(avatar,avatarLayer);
         avatar.setTag(AVATAR_TAG);
+        //avatar cant enter the inside terrain
+        avatar.physics().preventIntersectionsFromDirection(Vector2.ZERO);
         return avatar;
     }
+
+
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);

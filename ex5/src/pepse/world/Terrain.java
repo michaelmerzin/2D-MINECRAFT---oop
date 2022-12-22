@@ -31,8 +31,7 @@ public class Terrain {
     }
 
     public float groundHeightAt(float x) {
-//        return (float) noise( x, groundHeightAtX0);
-        return groundHeightAtX0;//TODO
+        return groundHeightAtX0; //TODO
     }
 
     public void createInRange(int minX, int maxX) {

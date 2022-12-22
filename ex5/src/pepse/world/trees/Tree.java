@@ -28,12 +28,12 @@ public class Tree {
     private static final String LEAVES_TAG = "leaves";
     private static final int FADE_OUT_TIME = 4;
     private static final int FADE_START_TIME = 200;
-
     private final GameObjectCollection gameObjects;
     private final int treeLayer;
     private final float height;
     private final int leaveLayer;
     private final Random rand = new Random();
+
 
     public Tree(GameObjectCollection gameObjects, int treeLayer, int leaveLayer,
                 Vector2 windowDimensions, Function<Float, Float> heightAtX) {

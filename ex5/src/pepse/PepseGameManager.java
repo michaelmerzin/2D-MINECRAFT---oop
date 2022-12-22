@@ -7,6 +7,7 @@ import danogl.gui.ImageReader;
 import danogl.gui.SoundReader;
 import danogl.gui.UserInputListener;
 import danogl.gui.WindowController;
+import pepse.world.Avatar;
 import pepse.world.Sky;
 import pepse.world.daynight.Sun;
 import pepse.world.Terrain;
@@ -39,7 +40,7 @@ public class PepseGameManager extends GameManager {
                 ground::groundHeightAt);
 
         tree.createInRange(0, (int) windowController.getWindowDimensions().x());
-        Avatar.create(gameObjects(), Layer.FOREGROUND, windowController.getWindowDimensions().mult(0.5f), inputListener, imageReader);
+        Avatar.create(gameObjects(), Layer.DEFAULT, windowController.getWindowDimensions().mult(0.5f), inputListener, imageReader);
     }
 
     @Override

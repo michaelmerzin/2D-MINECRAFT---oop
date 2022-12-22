@@ -20,10 +20,14 @@ public class Night {
         Darkness.setCoordinateSpace(CoordinateSpace.CAMERA_COORDINATES);
         gameObjects.addGameObject(Darkness, Layer);
         Darkness.setTag(NIGHT_TAG);
-        Transition<Float> transitionForDarkness = new Transition<Float>(Darkness, Darkness.renderer()::setOpaqueness,
+        fadeOut(Darkness, cycleLength);
+        return Darkness;
+    }
+
+    private static void fadeOut(GameObject Darkness, float cycleLength){
+        new Transition<Float>(Darkness, Darkness.renderer()::setOpaqueness,
                 0f, MID_NIGHT_OPACITY,
                 Transition.CUBIC_INTERPOLATOR_FLOAT,
                 cycleLength, Transition.TransitionType.TRANSITION_BACK_AND_FORTH, null);
-        return Darkness;
     }
 }
