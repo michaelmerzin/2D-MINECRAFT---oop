@@ -65,14 +65,14 @@ public class PepseGameManager extends GameManager {
     private Avatar createAvatar(WindowController windowController,
                                 UserInputListener inputListener, ImageReader imageReader) {
 
-//      Vector2 initialAvatarPos = windowController.getWindowDimensions().mult(0.5f).multY(2);
         float yOfx=ground.groundHeightAt(windowController.getWindowDimensions().x());
-        Vector2 initialAvatarPos =
-                new Vector2(windowController.getWindowDimensions().x(),windowController.getWindowDimensions().y()-yOfx);
+        Vector2 initialAvatarPos = new Vector2(windowController.getWindowDimensions().x(),
+                                                windowController.getWindowDimensions().y()-yOfx);
         Avatar avatar = Avatar.create(gameObjects(),
                 Layer.DEFAULT, initialAvatarPos, inputListener, imageReader);
         Vector2 relativeVector = initialAvatarPos.add(initialAvatarPos.mult(-1));
-        setCamera(new Camera(avatar, relativeVector, windowController.getWindowDimensions(), windowController.getWindowDimensions()));
+        setCamera(new Camera(avatar, relativeVector, windowController.getWindowDimensions(),
+                        windowController.getWindowDimensions()));
         return avatar;
     }
 

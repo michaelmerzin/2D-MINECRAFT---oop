@@ -19,6 +19,7 @@ public class Terrain {
     private static final double GROUND_RADIO = 0.3;
     private static final int TERRAIN_DEPTH = 20;
     private static final String BLOCK_TAG = "ground";
+    private static final double NOISE_PERSISTENCE = 2.45;
     private final GameObjectCollection gameObjects;
     private final int groundLayer;
     private final float groundHeightAtX0;
@@ -28,13 +29,14 @@ public class Terrain {
     private static ImageReader imageReader = null;
 
 
+
     public Terrain(GameObjectCollection gameObjects, int groundLayer, Vector2 windowDimensions, int seed) {
         this.groundLayer = groundLayer;
         this.gameObjects = gameObjects;
         this.groundHeightAtX0 = (float) (windowDimensions.y() * GROUND_RADIO);
         this.height = windowDimensions.y();
         this.seed = seed;
-        this.noise = new SimplexNoise(TERRAIN_DEPTH, 2.45, seed);
+        this.noise = new SimplexNoise(TERRAIN_DEPTH, NOISE_PERSISTENCE, seed);
 
 
     }
@@ -45,8 +47,6 @@ public class Terrain {
 
     public float groundHeightAt(float x) {
         return (float) noise.getNoise((int) x);
-//        return groundHeightAtX0; //TODO
-
     }
 
     public void createInRange(int minX, int maxX) {

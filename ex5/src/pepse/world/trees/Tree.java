@@ -25,10 +25,10 @@ public class Tree {
     private final int LEAVES_START = -2;
     private final int LEAVES_END = 3;
     private final int LEAVES_HEIGHT = 7;
-    private static final float CYCLE_LENGTH = 3;
+    private static final float CYCLE_LENGTH = 2;
     private static final String TRUNK_TAG = "trunk";
     private static final String LEAVES_TAG = "leaves";
-    private static final int FADE_OUT_TIME = 10;
+    private static final int FADE_OUT_TIME = 15;
     private static final int FADE_START_TIME = 500;
     private static final int LEAVE_BACK_TO_PLACE_TIME = 30;
     private static final int LeaveFallSpeed = 30;
@@ -38,6 +38,7 @@ public class Tree {
     private final int leaveLayer;
     private Random rand;
     private final int seed;
+    private final Vector2 windowDimensionsForLeaves;
 
 
     public Tree(GameObjectCollection gameObjects, int treeLayer, int leaveLayer,
@@ -49,6 +50,7 @@ public class Tree {
         this.height = windowDimensions.y();
         this.rand = new Random();
         this.seed = seed;
+        this.windowDimensionsForLeaves=windowDimensions;
 
     }
 
@@ -69,6 +71,7 @@ public class Tree {
     private void buildTree(float x)
     {
         float bottomY = this.heightAtX.apply(x);
+//        bottomY=(int)(bottomY);
         Block block;
         RectangleRenderable render = new RectangleRenderable(COLOR_OF_TREE);
         for (float y = bottomY; y < bottomY + Block.SIZE * TREE_HEIGHT; y += Block.SIZE) {
@@ -153,7 +156,7 @@ public class Tree {
         return new Block(cords, renderable);
     }
     private Block createLeave(Vector2 cords, Renderable renderable,Function<Float, Float> heightAtX) {
-        return new Block(cords, renderable,heightAtX);
+        return new Block(cords, renderable,heightAtX, this.windowDimensionsForLeaves);
     }
 }
 

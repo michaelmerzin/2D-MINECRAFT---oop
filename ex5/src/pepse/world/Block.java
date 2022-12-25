@@ -4,6 +4,7 @@ package pepse.world;
 import danogl.GameObject;
 import danogl.components.GameObjectPhysics;
 import danogl.components.ScheduledTask;
+import danogl.gui.WindowController;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 
@@ -17,13 +18,15 @@ public class Block extends GameObject {
     private Random rand;
     private Vector2 blockCenter;
     private  Function<Float, Float> heightAtX;
-    public Block(Vector2 topLeftCorner, Renderable renderable, Function<Float, Float> heightAtX)
+    private  Vector2 windowDimensions;
+    public Block(Vector2 topLeftCorner, Renderable renderable, Function<Float, Float> heightAtX, Vector2 windowDimensions)
     {
         super(topLeftCorner,Vector2.ONES.mult(SIZE),renderable);
         physics().preventIntersectionsFromDirection(Vector2.ZERO);
         physics().setMass(GameObjectPhysics.IMMOVABLE_MASS);
         this.blockCenter=super.getCenter();
         this.heightAtX=heightAtX;
+        this.windowDimensions=windowDimensions;
     }
 
     public Block(Vector2 topLeftCorner, Renderable renderable)
@@ -33,19 +36,19 @@ public class Block extends GameObject {
         physics().setMass(GameObjectPhysics.IMMOVABLE_MASS);
         this.blockCenter=super.getCenter();
     }
-//    public void update(float deltaTime)
-//    {
-//        super.update(deltaTime);
-//        if(this.getTag().equals("leaves"))
-//        {
-//            if(this.getVelocity().y()!=0) {
-//                if (this.getCenter().y() == 864-heightAtX.apply(this.getCenter().x())) {
-//                    this.setVelocity(Vector2.ZERO);
-//                }
-//            }
-//        }
-//
-//    }
+    public void update(float deltaTime)
+    {
+        super.update(deltaTime);
+        if(this.getTag().equals("leaves"))
+        {
+            if(this.getVelocity().y()!=0) {
+                if (this.getCenter().y() >= windowDimensions.y()-heightAtX.apply(this.getCenter().x())+Block.SIZE) {
+                    this.setVelocity(Vector2.ZERO);
+                }
+            }
+        }
+
+    }
 
 
 

@@ -23,6 +23,10 @@ public class Avatar extends GameObject {
     private static final String AVATAR_TAG = "Avatar";
     private final UserInputListener inputListener;
     private final ImageReader imageReader;
+    private final ImageRenderable leftImage;
+    private final ImageRenderable rightImage;
+    private final ImageRenderable staticImage;
+
 
     private Avatar(Vector2 pos, UserInputListener inputListener, ImageReader imageReader) {
         super(pos, Vector2.ONES.multX(SIZE_RATIO_TO_BASIC* 1.25f).multY(SIZE_RATIO_TO_BASIC * 1.5f),
@@ -31,6 +35,10 @@ public class Avatar extends GameObject {
         this.inputListener = inputListener;
         this.imageReader = imageReader;
 
+
+        this.leftImage = new ImageRenderable(imageReader.readImage(leftRun, true).getImage());
+        this.rightImage = new ImageRenderable(imageReader.readImage(rightRun, true).getImage());
+        this.staticImage = new ImageRenderable(imageReader.readImage(avatarImagePath, true).getImage());
     }
 
     public static Avatar create(GameObjectCollection gameObjects, int avatarLayer,
@@ -53,27 +61,30 @@ public class Avatar extends GameObject {
     private void handleMovement() {
         float xVel = 0;
         if (inputListener.isKeyPressed(KeyEvent.VK_LEFT)) {
-            super.renderer().setRenderable(new ImageRenderable(imageReader.readImage(leftRun, true).getImage()));
-
+            super.renderer().setRenderable(leftImage);
             xVel -= VELOCITY_X;
         }
         if (inputListener.isKeyPressed(KeyEvent.VK_RIGHT)) {
-            super.renderer().setRenderable(new ImageRenderable(imageReader.readImage(rightRun, true).getImage()));
+            super.renderer().setRenderable(rightImage);
             xVel += VELOCITY_X;
         }
         if (!inputListener.isKeyPressed(KeyEvent.VK_LEFT) && !inputListener.isKeyPressed(KeyEvent.VK_RIGHT)) {
-            super.renderer().setRenderable(new ImageRenderable(imageReader.readImage(avatarImagePath, true).getImage()));
+            super.renderer().setRenderable(staticImage);
         }
 
-        transform().setVelocityX(xVel);
-        if (inputListener.isKeyPressed(KeyEvent.VK_SPACE) && inputListener.isKeyPressed(KeyEvent.VK_DOWN)) {
-            physics().preventIntersectionsFromDirection(null);
-            new ScheduledTask(this, .5f, false,
-                    () -> physics().preventIntersectionsFromDirection(Vector2.ZERO));
-            return;
+        this.transform().setVelocityX(xVel);
+//        if (inputListener.isKeyPressed(KeyEvent.VK_SPACE) && inputListener.isKeyPressed(KeyEvent.VK_DOWN)) {
+//            this.physics().preventIntersectionsFromDirection(Vector2.ZERO);
+//            new ScheduledTask(this, .5f, false,
+//                    () -> this.physics().preventIntersectionsFromDirection(Vector2.ZERO));
+//            return;
+//        }
+        if(inputListener.isKeyPressed(KeyEvent.VK_SHIFT)&&inputListener.isKeyPressed(KeyEvent.VK_SPACE))
+        {
+            this.transform().setVelocityY(VELOCITY_Y);
         }
         if (inputListener.isKeyPressed(KeyEvent.VK_SPACE) && getVelocity().y() == 0) {
-            transform().setVelocityY(VELOCITY_Y);
+            this.transform().setVelocityY(VELOCITY_Y);
         }
     }
 }
