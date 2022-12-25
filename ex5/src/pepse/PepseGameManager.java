@@ -36,7 +36,7 @@ public class PepseGameManager extends GameManager {
                                SoundReader soundReader, UserInputListener inputListener,
                                WindowController windowController) {
         super.initializeGame(imageReader, soundReader, inputListener, windowController);
-
+        Terrain.setImageReader(imageReader);
         GameObject sky = Sky.create(gameObjects(), windowController.getWindowDimensions(), Layer.BACKGROUND);
         GameObject night = Night.create(gameObjects(), Layer.FOREGROUND, windowController.getWindowDimensions(), CYCLE_LENGTH);
         GameObject sun = Sun.create(gameObjects(), Layer.BACKGROUND + 1, windowController.getWindowDimensions(), CYCLE_LENGTH);
@@ -65,10 +65,13 @@ public class PepseGameManager extends GameManager {
     private Avatar createAvatar(WindowController windowController,
                                 UserInputListener inputListener, ImageReader imageReader) {
 
-        Vector2 initialAvatarPos = windowController.getWindowDimensions().mult(0.5f);
+//      Vector2 initialAvatarPos = windowController.getWindowDimensions().mult(0.5f).multY(2);
+        float yOfx=ground.groundHeightAt(windowController.getWindowDimensions().x());
+        Vector2 initialAvatarPos =
+                new Vector2(windowController.getWindowDimensions().x(),windowController.getWindowDimensions().y()-yOfx);
         Avatar avatar = Avatar.create(gameObjects(),
                 Layer.DEFAULT, initialAvatarPos, inputListener, imageReader);
-        Vector2 relativeVector = windowController.getWindowDimensions().mult(0.5f).add(initialAvatarPos.mult(-1));
+        Vector2 relativeVector = initialAvatarPos.add(initialAvatarPos.mult(-1));
         setCamera(new Camera(avatar, relativeVector, windowController.getWindowDimensions(), windowController.getWindowDimensions()));
         return avatar;
     }
@@ -83,7 +86,7 @@ public class PepseGameManager extends GameManager {
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
-
+        gameObjects().update(deltaTime);
         float x = avatar.getCenter().x();
 
         if (x - this.renderPoint < this.leftRenderEnding) {
@@ -94,6 +97,7 @@ public class PepseGameManager extends GameManager {
             createWord(this.rightRenderEnding, this.rightRenderEnding + this.renderChunk);
             this.rightRenderEnding = this.rightRenderEnding + this.renderChunk;
         }
+
     }
 
 

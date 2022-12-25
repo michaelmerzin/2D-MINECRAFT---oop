@@ -22,7 +22,7 @@ public class Sun {
         float radius = windowDimensions.x() * SUN_RADIO;
 
         GameObject sun = new GameObject(Vector2.ZERO, new Vector2(radius, radius), new OvalRenderable(SUN_COLOR));
-        sun.setCenter(new Vector2(windowDimensions.x()/2,SUN_HEIGHT));
+        sun.setCenter(new Vector2(windowDimensions.x()/2+200,SUN_HEIGHT));
         sun.setCoordinateSpace(CoordinateSpace.CAMERA_COORDINATES);
         gameObjects.addGameObject(sun, Layer);
         sun.setTag(SUN_TAG);
@@ -36,9 +36,9 @@ public class Sun {
                 sun.setCenter(sun.getCenter().add(calcSunPosition(windowDimensions,angel)));
 
         Transition<Float> transitionForDarkness = new Transition<Float>(sun,sunVector,
-                0f, SUN_ROTATION/2,
+                0f,SUN_ROTATION,
                 Transition.LINEAR_INTERPOLATOR_FLOAT,
-                cycleLength, Transition.TransitionType.TRANSITION_BACK_AND_FORTH, null);
+                cycleLength, Transition.TransitionType.TRANSITION_LOOP, null);
 
     }
 

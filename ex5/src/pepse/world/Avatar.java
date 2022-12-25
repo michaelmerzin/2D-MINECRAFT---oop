@@ -12,21 +12,21 @@ import danogl.util.Vector2;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public class Avatar extends GameObject
-{
-    private static final String avatarImagePath = "animation/avatarImage.jpg";
+public class Avatar extends GameObject {
+    private static final String avatarImagePath = "animation/steabe.png";
+    private static final String leftRun = "animation/download.png";
+    private static final String rightRun = "animation/runrights.png";
     private static final float SIZE_RATIO_TO_BASIC = 50;
     private static final float VELOCITY_X = 300;
     private static final float VELOCITY_Y = -300;
     private static final float GRAVITY = 600;
-    private static final String AVATAR_TAG= "Avatar";
+    private static final String AVATAR_TAG = "Avatar";
     private final UserInputListener inputListener;
     private final ImageReader imageReader;
 
-    private Avatar(Vector2 pos, UserInputListener inputListener,ImageReader imageReader)
-    {
-        super(pos, Vector2.ONES.mult(SIZE_RATIO_TO_BASIC),
-                new ImageRenderable(imageReader.readImage(avatarImagePath,true).getImage()));
+    private Avatar(Vector2 pos, UserInputListener inputListener, ImageReader imageReader) {
+        super(pos, Vector2.ONES.multX(SIZE_RATIO_TO_BASIC* 1.25f).multY(SIZE_RATIO_TO_BASIC * 1.5f),
+                new ImageRenderable(imageReader.readImage(avatarImagePath, true).getImage()));
         transform().setAccelerationY(GRAVITY);
         this.inputListener = inputListener;
         this.imageReader = imageReader;
@@ -34,10 +34,9 @@ public class Avatar extends GameObject
     }
 
     public static Avatar create(GameObjectCollection gameObjects, int avatarLayer,
-                                Vector2 topLeftCorner, UserInputListener inputListener, ImageReader imageReader)
-    {
-        Avatar avatar=new Avatar(topLeftCorner,inputListener,imageReader);
-        gameObjects.addGameObject(avatar,avatarLayer);
+                                Vector2 topLeftCorner, UserInputListener inputListener, ImageReader imageReader) {
+        Avatar avatar = new Avatar(topLeftCorner, inputListener, imageReader);
+        gameObjects.addGameObject(avatar, avatarLayer);
         avatar.setTag(AVATAR_TAG);
         //avatar cant enter the inside terrain
         avatar.physics().preventIntersectionsFromDirection(Vector2.ZERO);
@@ -51,20 +50,30 @@ public class Avatar extends GameObject
         handleMovement();
     }
 
-    private void handleMovement(){
+    private void handleMovement() {
         float xVel = 0;
-        if(inputListener.isKeyPressed(KeyEvent.VK_LEFT))
+        if (inputListener.isKeyPressed(KeyEvent.VK_LEFT)) {
+            super.renderer().setRenderable(new ImageRenderable(imageReader.readImage(leftRun, true).getImage()));
+
             xVel -= VELOCITY_X;
-        if(inputListener.isKeyPressed(KeyEvent.VK_RIGHT))
+        }
+        if (inputListener.isKeyPressed(KeyEvent.VK_RIGHT)) {
+            super.renderer().setRenderable(new ImageRenderable(imageReader.readImage(rightRun, true).getImage()));
             xVel += VELOCITY_X;
+        }
+        if (!inputListener.isKeyPressed(KeyEvent.VK_LEFT) && !inputListener.isKeyPressed(KeyEvent.VK_RIGHT)) {
+            super.renderer().setRenderable(new ImageRenderable(imageReader.readImage(avatarImagePath, true).getImage()));
+        }
+
         transform().setVelocityX(xVel);
-        if(inputListener.isKeyPressed(KeyEvent.VK_SPACE) && inputListener.isKeyPressed(KeyEvent.VK_DOWN)) {
+        if (inputListener.isKeyPressed(KeyEvent.VK_SPACE) && inputListener.isKeyPressed(KeyEvent.VK_DOWN)) {
             physics().preventIntersectionsFromDirection(null);
             new ScheduledTask(this, .5f, false,
-                    ()->physics().preventIntersectionsFromDirection(Vector2.ZERO));
+                    () -> physics().preventIntersectionsFromDirection(Vector2.ZERO));
             return;
         }
-        if(inputListener.isKeyPressed(KeyEvent.VK_SPACE) && getVelocity().y() == 0)
+        if (inputListener.isKeyPressed(KeyEvent.VK_SPACE) && getVelocity().y() == 0) {
             transform().setVelocityY(VELOCITY_Y);
+        }
     }
 }
