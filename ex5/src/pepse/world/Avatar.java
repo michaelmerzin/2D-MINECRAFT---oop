@@ -20,6 +20,7 @@ public class Avatar extends GameObject {
     private static final float VELOCITY_X = 300;
     private static final float VELOCITY_Y = -300;
     private static final float GRAVITY = 600;
+    private static final float ACCELERATION_Y = 500;
     private static final String AVATAR_TAG = "Avatar";
     private final UserInputListener inputListener;
     private final ImageReader imageReader;
@@ -79,12 +80,17 @@ public class Avatar extends GameObject {
 //                    () -> this.physics().preventIntersectionsFromDirection(Vector2.ZERO));
 //            return;
 //        }
-        if(inputListener.isKeyPressed(KeyEvent.VK_SHIFT)&&inputListener.isKeyPressed(KeyEvent.VK_SPACE))
+
+        if(inputListener.isKeyPressed(KeyEvent.VK_SHIFT) && inputListener.isKeyPressed(KeyEvent.VK_SPACE))
         {
+            this.physics().preventIntersectionsFromDirection(Vector2.ZERO);
             this.transform().setVelocityY(VELOCITY_Y);
+            this.transform().setAccelerationY(ACCELERATION_Y);
         }
+
         if (inputListener.isKeyPressed(KeyEvent.VK_SPACE) && getVelocity().y() == 0) {
             this.transform().setVelocityY(VELOCITY_Y);
+            this.physics().preventIntersectionsFromDirection(Vector2.ZERO);
         }
     }
 }
