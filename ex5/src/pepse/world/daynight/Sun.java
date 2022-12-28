@@ -14,6 +14,7 @@ public class Sun {
     private static final Color SUN_COLOR = Color.YELLOW;
     private static final String SUN_TAG = "sun";
     private static final float SUN_RADIO = 0.12f;
+    private static final float SUN_RADIUS=20;
     private static final float SUN_HEIGHT=150;
     private static final float SUN_ROTATION = (float) (2*Math.PI);
 

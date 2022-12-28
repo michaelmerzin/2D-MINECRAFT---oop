@@ -2,6 +2,7 @@ package pepse.world;
 
 
 import danogl.GameObject;
+import danogl.collisions.Collision;
 import danogl.components.GameObjectPhysics;
 import danogl.components.ScheduledTask;
 import danogl.gui.WindowController;
@@ -48,6 +49,23 @@ public class Block extends GameObject {
             }
         }
 
+    }
+    @Override
+    public boolean shouldCollideWith(GameObject other) {
+        if(this.getTag().equals("leaves")&&!(other.getTag().equals("ground")))
+        {
+            return false;
+        }
+        return true;
+    }
+    @Override
+    public void onCollisionEnter(GameObject other, Collision collision)
+    {
+        if(this.getTag().equals("leaves")&&other.getTag().equals("ground"))
+        {
+            this.setVelocity(Vector2.ZERO);
+        }
+        super.onCollisionEnter(other,collision);
     }
 
 

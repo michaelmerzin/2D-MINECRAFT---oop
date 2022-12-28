@@ -85,8 +85,7 @@ public class PepseGameManager extends GameManager {
 
     @Override
     public void update(float deltaTime) {
-        super.update(deltaTime);
-        gameObjects().update(deltaTime);
+
         float x = avatar.getCenter().x();
 
         if (x - this.renderPoint < this.leftRenderEnding) {
@@ -97,6 +96,8 @@ public class PepseGameManager extends GameManager {
             createWord(this.rightRenderEnding, this.rightRenderEnding + this.renderChunk);
             this.rightRenderEnding = this.rightRenderEnding + this.renderChunk;
         }
+        super.update(deltaTime);
+        gameObjects().update(deltaTime);
 
     }
 

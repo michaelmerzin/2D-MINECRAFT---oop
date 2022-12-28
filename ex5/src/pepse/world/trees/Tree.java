@@ -20,7 +20,7 @@ public class Tree {
     private static final int UPPER_BOUND = 10;
     private static final int TREE_HEIGHT = 4;
     private static final Color COLOR_OF_TREE = new Color(100, 50, 20);
-    private static final Color COLOR_OF_LEAVES = new Color(50, 200, 30);
+    private static final Color COLOR_OF_LEAVES = new Color(0, 102, 0);
     private final Function<Float, Float> heightAtX;
     private final int LEAVES_START = -2;
     private final int LEAVES_END = 3;
@@ -95,9 +95,6 @@ public class Tree {
                 gameObjects.addGameObject(leave, leaveLayer);
                 rotateLeave(leave);
                 droppingLeave(leave);
-
-
-
 
             }
         }
