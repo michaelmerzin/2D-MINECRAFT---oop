@@ -21,7 +21,8 @@ import pepse.world.trees.Tree;
 import java.awt.*;
 
 public class PepseGameManager extends GameManager {
-    private static final float CYCLE_LENGTH = 30;
+    private static final float CYCLE_LENGTH_NIGHT = 30;
+    private static final float CYCLE_LENGTH_SUN = 60;
     private static final Color HALO_COLOR = new Color(255, 255, 0, 20);
     private float renderPoint;
     private int renderChunk;
@@ -38,8 +39,8 @@ public class PepseGameManager extends GameManager {
         super.initializeGame(imageReader, soundReader, inputListener, windowController);
         Terrain.setImageReader(imageReader);
         GameObject sky = Sky.create(gameObjects(), windowController.getWindowDimensions(), Layer.BACKGROUND);
-        GameObject night = Night.create(gameObjects(), Layer.FOREGROUND, windowController.getWindowDimensions(), CYCLE_LENGTH);
-        GameObject sun = Sun.create(gameObjects(), Layer.BACKGROUND + 1, windowController.getWindowDimensions(), CYCLE_LENGTH);
+        GameObject night = Night.create(gameObjects(), Layer.FOREGROUND, windowController.getWindowDimensions(), CYCLE_LENGTH_NIGHT);
+        GameObject sun = Sun.create(gameObjects(), Layer.BACKGROUND + 1, windowController.getWindowDimensions(), CYCLE_LENGTH_SUN);
         GameObject halo = createHalo(sun);
 
 

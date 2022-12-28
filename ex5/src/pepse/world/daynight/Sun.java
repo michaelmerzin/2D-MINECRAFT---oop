@@ -14,7 +14,7 @@ public class Sun {
     private static final Color SUN_COLOR = Color.YELLOW;
     private static final String SUN_TAG = "sun";
     private static final float SUN_RADIO = 0.12f;
-    private static final float SUN_RADIUS=20;
+    private static final float SUN_RADIUS=375;
     private static final float SUN_HEIGHT=150;
     private static final float SUN_ROTATION = (float) (2*Math.PI);
 
@@ -34,10 +34,11 @@ public class Sun {
 
     private static void rotateSun(GameObject sun, Vector2 windowDimensions, float cycleLength){
         Consumer<Float> sunVector=(angel)->
-                sun.setCenter(sun.getCenter().add(calcSunPosition(windowDimensions,angel)));
+                sun.setCenter(windowDimensions.mult(0.5f).add(calcSunPosition(windowDimensions,angel)));
 
         Transition<Float> transitionForDarkness = new Transition<Float>(sun,sunVector,
-                0f,SUN_ROTATION,
+                (float)(-Math.PI/2),
+                (float)(3*Math.PI/2),
                 Transition.LINEAR_INTERPOLATOR_FLOAT,
                 cycleLength, Transition.TransitionType.TRANSITION_LOOP, null);
 
@@ -45,8 +46,8 @@ public class Sun {
 
     private static Vector2 calcSunPosition(Vector2 windowDimensions,float angel)
     {
-        float x = (float) (Math.cos(angel)+Math.sin(angel));
-        float y = (float) (Math.cos(angel)-Math.sin(angel));
+        float x = (float) (SUN_RADIUS*Math.cos(angel));
+        float y = (float) (SUN_RADIUS*Math.sin(angel));
         return new Vector2(x,y);
     }
 
