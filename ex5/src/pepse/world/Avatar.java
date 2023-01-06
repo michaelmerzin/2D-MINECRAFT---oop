@@ -31,9 +31,7 @@ public class Avatar extends GameObject {
     private static final float ACCELERATION_Y = 500;
     private static final String AVATAR_TAG = "Avatar";
     private static final int MAX_ENERGY = 200;
-
     private final UserInputListener inputListener;
-    private final ImageReader imageReader;
     private final ImageRenderable leftImage;
     private final ImageRenderable rightImage;
     private final ImageRenderable staticImage;
@@ -41,17 +39,20 @@ public class Avatar extends GameObject {
     private final ImageRenderable flyingLeft;
     private final ImageRenderable flyingRight;
     private final Counter energy ;
-//    private final Energy energy_text;
 
-
-
-
+    /**
+     *
+     * @param pos The position of the avatar.
+     * @param inputListener The input listener to use.
+     * @param imageReader The image reader to use.
+     * @param energy The energy of the avatar.
+     */
     private Avatar(Vector2 pos, UserInputListener inputListener, ImageReader imageReader,Counter energy) {
-        super(pos, Vector2.ONES.multX(SIZE_RATIO_TO_BASIC * 1.25f).multY(SIZE_RATIO_TO_BASIC * 1.5f),
+        super(pos, Vector2.ONES.multX(SIZE_RATIO_TO_BASIC*1.25f).multY(SIZE_RATIO_TO_BASIC * 1.5f),
                 new ImageRenderable(imageReader.readImage(avatarImagePath, true).getImage()));
         transform().setAccelerationY(GRAVITY);
         this.inputListener = inputListener;
-        this.imageReader = imageReader;
+
 
         this.flyingUp = new ImageRenderable(imageReader.readImage(FlyingUp, true).getImage());
         this.leftImage = new ImageRenderable(imageReader.readImage(leftRun, true).getImage());
@@ -66,6 +67,15 @@ public class Avatar extends GameObject {
 
     }
 
+    /**
+     *
+     * @param gameObjects The game objects to use.
+     * @param avatarLayer The avatar layer to use.
+     * @param topLeftCorner The top left corner of the avatar.
+     * @param inputListener The input listener to use.
+     * @param imageReader The image reader to use.
+     * @return The avatar.
+     */
     public static Avatar create(GameObjectCollection gameObjects, int avatarLayer,
                                 Vector2 topLeftCorner, UserInputListener inputListener, ImageReader imageReader) {
         Counter energy=new Counter(MAX_ENERGY);
@@ -77,7 +87,6 @@ public class Avatar extends GameObject {
 
         Energy energy_text=new Energy(energy);
         energy_text.setCoordinateSpace(CoordinateSpace.CAMERA_COORDINATES);
-
         gameObjects.addGameObject(energy_text,Layer.UI);
 
         return avatar;
@@ -85,11 +94,18 @@ public class Avatar extends GameObject {
 
 
     @Override
-    public void update(float deltaTime) {
+    public void update(float deltaTime)
+    {
         super.update(deltaTime);
+        if (transform().getVelocity().y() == 0) {
+            this.physics().preventIntersectionsFromDirection(Vector2.ZERO);
+        }
         handleMovement();
     }
 
+    /**
+     * Handles the movement of the avatar.
+     */
     private void handleMovement() {
         float xVel = 0;
         if (inputListener.isKeyPressed(KeyEvent.VK_LEFT)) {
@@ -101,7 +117,8 @@ public class Avatar extends GameObject {
             xVel += VELOCITY_X;
 
         }
-        if (!inputListener.isKeyPressed(KeyEvent.VK_LEFT) && !inputListener.isKeyPressed(KeyEvent.VK_RIGHT)&&!inputListener.isKeyPressed(KeyEvent.VK_SPACE)) {
+        if (!inputListener.isKeyPressed(KeyEvent.VK_LEFT) && !inputListener.isKeyPressed(KeyEvent.VK_RIGHT) &&
+                !inputListener.isKeyPressed(KeyEvent.VK_SPACE)) {
             super.renderer().setRenderable(staticImage);
             if(this.energy.value()<MAX_ENERGY) {
                 this.energy.increment();
@@ -134,13 +151,21 @@ public class Avatar extends GameObject {
         }
     }
 
+    public boolean shouldCollideWith(GameObject other) {
+        if(other instanceof Block)
+        {
+            return true ;
+        }
+        return true;
+    }
+
     @Override
     public void onCollisionEnter(GameObject other, Collision collision) {
+
         if (other.getTag().equals("ground")) {
             this.setVelocity(Vector2.ZERO);
         }
-        super.onCollisionEnter(other, collision);
-
     }
+
 
 }

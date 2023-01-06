@@ -19,64 +19,70 @@ public class Terrain {
     private static final double GROUND_RADIO = 0.3;
     private static final int TERRAIN_DEPTH = 20;
     private static final String BLOCK_TAG = "ground";
-    private static final double NOISE_PERSISTENCE = 2.45;
+    private static final double NOISE_PERSISTENCE = 2.1 ;
     private final GameObjectCollection gameObjects;
     private final int groundLayer;
     private final float groundHeightAtX0;
     private final float height;
     private final int seed;
     private final SimplexNoise noise;
-    private static ImageReader imageReader = null;
+    private final ImageRenderable renderDirt;
+    private final ImageRenderable renderGrass;
 
-
-
-    public Terrain(GameObjectCollection gameObjects, int groundLayer, Vector2 windowDimensions, int seed) {
+    /**
+     * Creates a new terrain
+     * @param gameObjects The game objects collection
+     * @param groundLayer The layer of the ground
+     * @param windowDimensions The dimensions of the window
+     * @param seed The seed for the terrain
+     */
+    public Terrain(GameObjectCollection gameObjects, int groundLayer, Vector2 windowDimensions,
+                   int seed, ImageReader imageReader) {
         this.groundLayer = groundLayer;
         this.gameObjects = gameObjects;
         this.groundHeightAtX0 = (float) (windowDimensions.y() * GROUND_RADIO);
         this.height = windowDimensions.y();
         this.seed = seed;
         this.noise = new SimplexNoise(TERRAIN_DEPTH, NOISE_PERSISTENCE, seed);
+        this.renderDirt =  new
+                ImageRenderable(imageReader.readImage(DIRT_IMAGE, true).getImage());
+        this.renderGrass = new
+                ImageRenderable(imageReader.readImage(GRASS_IMAGE, true).getImage());
 
-
-    }
-
-    public static void setImageReader(ImageReader imageReader) {
-        Terrain.imageReader = imageReader;
     }
 
     public float groundHeightAt(float x) {
         return (float) noise.getNoise((int) x);
     }
 
+    /**
+     * Creates a new terrain
+     * @param minX The minimum x coordinate
+     * @param maxX The maximum x coordinate
+     */
     public void createInRange(int minX, int maxX) {
         int startX = calcStart(minX);
         int endX = calcEnd(maxX);
         Block block;
         int y;
-        boolean areWeOnTheSurface = true;
-        ImageRenderable render_dert =
-                new ImageRenderable(imageReader.readImage(DIRT_IMAGE, true).getImage());;
-        ImageRenderable render_grass =
-                new ImageRenderable(imageReader.readImage(GRASS_IMAGE, true).getImage());
+        boolean onSurface = true;
+
         for (int x = startX; x < endX; x += Block.SIZE) {
             y = calcTopY(x);
-            areWeOnTheSurface = true;
+            onSurface = true;
             for (int i = 0; i < TERRAIN_DEPTH; i++) {
                 y -= Block.SIZE;
-                if (areWeOnTheSurface) {
-                    block = createBlock(new Vector2(x, height - y), render_grass);
+                if (onSurface) {
+                    block = createBlock(new Vector2(x, height - y), this.renderGrass);
                 } else {
-                    block = createBlock(new Vector2(x, height - y), render_dert);
+                    block = createBlock(new Vector2(x, height - y), this.renderDirt);
                 }
                 gameObjects.addGameObject(block, groundLayer);
                 block.setTag(BLOCK_TAG);
-                areWeOnTheSurface = false;
+                onSurface = false;
             }
 
         }
-
-
     }
 
     private int calcTopY(int x) {

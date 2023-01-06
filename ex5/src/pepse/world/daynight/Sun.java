@@ -17,7 +17,14 @@ public class Sun {
     private static final float SUN_RADIUS=375;
     private static final float SUN_HEIGHT=150;
     private static final float SUN_ROTATION = (float) (2*Math.PI);
-
+    /**
+     * Creates a new sun
+     * @param gameObjects The game objects collection
+     * @param Layer The layer of the sun
+     * @param windowDimensions The dimensions of the window
+     * @param cycleLength The length of the cycle
+     * @return The sun
+     */
     public static GameObject create(GameObjectCollection gameObjects, int Layer,
                                     Vector2 windowDimensions, float cycleLength) {
         float radius = windowDimensions.x() * SUN_RADIO;
@@ -31,7 +38,12 @@ public class Sun {
         return sun;
 
     }
-
+    /**
+     * Rotates the sun
+     * @param sun The sun
+     * @param windowDimensions The dimensions of the window
+     * @param cycleLength The length of the cycle
+     */
     private static void rotateSun(GameObject sun, Vector2 windowDimensions, float cycleLength){
         Consumer<Float> sunVector=(angel)->
                 sun.setCenter(windowDimensions.mult(0.5f).add(calcSunPosition(windowDimensions,angel)));
@@ -43,7 +55,12 @@ public class Sun {
                 cycleLength, Transition.TransitionType.TRANSITION_LOOP, null);
 
     }
-
+    /**
+     * Calculates the position of the sun
+     * @param windowDimensions The dimensions of the window
+     * @param angel The angel of the sun
+     * @return The position of the sun
+     */
     private static Vector2 calcSunPosition(Vector2 windowDimensions,float angel)
     {
         float x = (float) (SUN_RADIUS*Math.cos(angel));

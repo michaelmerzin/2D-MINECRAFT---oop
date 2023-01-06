@@ -11,6 +11,11 @@ public class Energy extends GameObject {
     private static final int ENERGY_RATE_CHANGE = 2;
     private final TextRenderable energyText;
     private final Counter energy;
+    /**
+     * Creates a new energy object
+     * @param position The position of the energy object
+     * @param energy The initial energy
+     */
     Energy(Counter energyOfAvatar)
     {
         super(Vector2.ZERO,new Vector2(TEXT_WIDTH,TEXT_HEIGHT), null);
@@ -19,6 +24,9 @@ public class Energy extends GameObject {
         this.energyText=new TextRenderable(str);
         this.renderer().setRenderable(this.energyText);
     }
+    /**
+     * Updates the energy text
+     */
     @Override
     public void update(float deltaTime)
     {
