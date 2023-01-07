@@ -40,10 +40,14 @@ public class Tree {
     private Random rand;
     private final int seed;
     private final Vector2 windowDimensionsForLeaves;
+    private static final RectangleRenderable renderTrunk=new RectangleRenderable(COLOR_OF_TREE);
+    private static final RectangleRenderable renderLeaves=new RectangleRenderable(COLOR_OF_LEAVES);;
+
 
 
     public Tree(GameObjectCollection gameObjects, int treeLayer, int leaveLayer,
                 Vector2 windowDimensions, Function<Float, Float> heightAtX, int seed) {
+
         this.treeLayer = treeLayer;
         this.leaveLayer = leaveLayer;
         this.gameObjects = gameObjects;
@@ -52,6 +56,7 @@ public class Tree {
         this.rand = new Random();
         this.seed = seed;
         this.windowDimensionsForLeaves=windowDimensions;
+
 
     }
 
@@ -81,7 +86,7 @@ public class Tree {
     {
         float bottomY = this.heightAtX.apply(x);
         Block block;
-        RectangleRenderable render = new RectangleRenderable(COLOR_OF_TREE);
+        RectangleRenderable render = this.renderTrunk;
         for (float y = bottomY; y < bottomY + Block.SIZE * TREE_HEIGHT; y += Block.SIZE) {
             block = createBlock(new Vector2(x, height - y + Block.SIZE), render);
             gameObjects.addGameObject(block, treeLayer);
@@ -97,7 +102,7 @@ public class Tree {
     private void buildLeaves(float x) {
         Block leave;
         float bottomY = this.heightAtX.apply(x);
-        RectangleRenderable render = new RectangleRenderable(COLOR_OF_LEAVES);
+        RectangleRenderable render = this.renderLeaves;
         for (int leaveX = LEAVES_START; leaveX < LEAVES_END; leaveX++) {
             for (float h = bottomY; h < bottomY + Block.SIZE * LEAVES_HEIGHT; h += Block.SIZE) {
                 leave = createLeave(new Vector2(x - leaveX * Block.SIZE,
@@ -110,12 +115,7 @@ public class Tree {
             }
         }
     }
-    /**
-     * creates a block at the given position with the given render
-     * @param position the position of the block
-     * @param render the render of the block
-     * @return the created block
-     */
+
     private void droppingLeave(Block leave){
         int leavesLifeTime = rand.nextInt(FADE_START_TIME); // after that time the leave starting to move and fade.
         Vector2 startingPlace=leave.getCenter().getImmutableCopy();
@@ -166,7 +166,7 @@ public class Tree {
     }
 
     private int calcEnd(int end) {
-        return end + (end % Block.SIZE);
+        return end + Block.SIZE - (end % Block.SIZE);
     }
 
     private Block createBlock(Vector2 cords, Renderable renderable) {

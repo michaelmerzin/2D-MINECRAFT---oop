@@ -13,8 +13,8 @@ public class Energy extends GameObject {
     private final Counter energy;
     /**
      * Creates a new energy object
-     * @param position The position of the energy object
-     * @param energy The initial energy
+     * //@param position The position of the energy object
+     * //@param energy The initial energy
      */
     Energy(Counter energyOfAvatar)
     {

@@ -23,11 +23,13 @@ public class Terrain {
     private final GameObjectCollection gameObjects;
     private final int groundLayer;
     private final float groundHeightAtX0;
+    private static final Color COLOR_OF_LEAVES = new Color(0, 102, 0);
+    private static final Color COLOR_OF_TREE = new Color(100, 50, 20);
+    private static final RectangleRenderable renderDirt = new RectangleRenderable(COLOR_OF_TREE);
+    private static final RectangleRenderable renderGrass = new RectangleRenderable(COLOR_OF_LEAVES);
     private final float height;
     private final int seed;
     private final SimplexNoise noise;
-    private final ImageRenderable renderDirt;
-    private final ImageRenderable renderGrass;
 
     /**
      * Creates a new terrain
@@ -44,10 +46,7 @@ public class Terrain {
         this.height = windowDimensions.y();
         this.seed = seed;
         this.noise = new SimplexNoise(TERRAIN_DEPTH, NOISE_PERSISTENCE, seed);
-        this.renderDirt =  new
-                ImageRenderable(imageReader.readImage(DIRT_IMAGE, true).getImage());
-        this.renderGrass = new
-                ImageRenderable(imageReader.readImage(GRASS_IMAGE, true).getImage());
+
 
     }
 
@@ -73,9 +72,9 @@ public class Terrain {
             for (int i = 0; i < TERRAIN_DEPTH; i++) {
                 y -= Block.SIZE;
                 if (onSurface) {
-                    block = createBlock(new Vector2(x, height - y), this.renderGrass);
+                    block = createBlock(new Vector2(x, height - y), renderGrass);
                 } else {
-                    block = createBlock(new Vector2(x, height - y), this.renderDirt);
+                    block = createBlock(new Vector2(x, height - y), renderDirt);
                 }
                 gameObjects.addGameObject(block, groundLayer);
                 block.setTag(BLOCK_TAG);
@@ -95,7 +94,7 @@ public class Terrain {
     }
 
     private int calcEnd(int end) {
-        return end + (end % Block.SIZE);
+        return end + Block.SIZE - (end % Block.SIZE);
     }
 
     private Block createBlock(Vector2 cords, Renderable renderable) {

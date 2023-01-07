@@ -63,7 +63,7 @@ public class Sun {
      */
     private static Vector2 calcSunPosition(Vector2 windowDimensions,float angel)
     {
-        float x = (float) (SUN_RADIUS*Math.cos(angel));
+        float x = (float) (SUN_RADIUS*1.5*Math.cos(angel));
         float y = (float) (SUN_RADIUS*Math.sin(angel));
         return new Vector2(x,y);
     }

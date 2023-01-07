@@ -65,9 +65,10 @@ public class PepseGameManager extends GameManager {
 
         this.heightAtX = ground::groundHeightAt;
         this.renderPoint = windowController.getWindowDimensions().x() / 2;
-        this.leftRenderEnding = (int) (0 - this.renderPoint);
-        this.rightRenderEnding = (int) (windowController.getWindowDimensions().x() + this.renderPoint);
-        this.renderChunk = (int) windowController.getWindowDimensions().x();
+        this.leftRenderEnding = roundDown((int) (0 - this.renderPoint));
+        this.rightRenderEnding = roundUp((int) (windowController.getWindowDimensions().x() + this.renderPoint));
+        this.renderChunk = roundUp((int) windowController.getWindowDimensions().x());
+
         createWord(leftRenderEnding, rightRenderEnding);
         this.gameObjects().layers().shouldLayersCollide(LEAVE_LAYER, AVATAR_LAYER, true);
         this.gameObjects().layers().shouldLayersCollide(TREE_LAYER, AVATAR_LAYER, true);
@@ -76,23 +77,21 @@ public class PepseGameManager extends GameManager {
     }
 
     /**
-     *
      * @param startX inclusive
-     * @param endX exclusive
+     * @param endX   exclusive
      */
     private void createWord(int startX, int endX) {
 
         this.trees.createInRange(startX, endX);
         this.ground.createInRange(startX, endX);
-        Cow.createInRange(this.gameObjects(), AVATAR_LAYER, this.imageReader, startX, endX, this.seed,
-                this.heightAtX, this.windowController.getWindowDimensions().y());
+//        Cow.createInRange(this.gameObjects(), AVATAR_LAYER, this.imageReader, startX, endX, this.seed,
+//                this.heightAtX, this.windowController.getWindowDimensions().y());
 
     }
 
     /**
-     *
-     * @param x   the x position of the avatar
-     * @param xOffset  offset from x
+     * @param x the x position of the avatar
+     * @param xOffset offset from x
      */
     private void removeWord(float x, float xOffset) {
         ArrayList<GameObject> removeList = new ArrayList<>();
@@ -101,23 +100,31 @@ public class PepseGameManager extends GameManager {
                 removeList.add(object);
             }
         }
+
         for (GameObject object : removeList) {
-            this.gameObjects().removeGameObject(object);
+            if (object.getTag().equals("leaves") )
+               this.gameObjects().removeGameObject(object, LEAVE_LAYER);
+
+            else if (object.getTag().equals("ground")) {
+                this.gameObjects().removeGameObject(object, GROUND_LAYER);
+            }
+                    else if (object.getTag().equals("trunk")) {
+                        this.gameObjects().removeGameObject(object, TREE_LAYER);
+            }
         }
     }
 
     /**
-     *
      * @param windowController the window controller
-     * @param inputListener the input listener
-     * @param imageReader the image reader
+     * @param inputListener    the input listener
+     * @param imageReader      the image reader
      * @return the avatar
      */
     private Avatar createAvatar(WindowController windowController,
                                 UserInputListener inputListener, ImageReader imageReader) {
 
-        float yOfx = ground.groundHeightAt(windowController.getWindowDimensions().x());
-        Vector2 initialAvatarPos = new Vector2(windowController.getWindowDimensions().x(),
+        float yOfx = ground.groundHeightAt(windowController.getWindowDimensions().x() / 2);
+        Vector2 initialAvatarPos = new Vector2(windowController.getWindowDimensions().x() / 2,
                 windowController.getWindowDimensions().y() - yOfx);
         Avatar avatar = Avatar.create(gameObjects(),
                 AVATAR_LAYER, initialAvatarPos, inputListener, imageReader);
@@ -130,7 +137,6 @@ public class PepseGameManager extends GameManager {
     }
 
     /**
-     *
      * @param sun the sun
      * @return the halo
      */
@@ -144,25 +150,38 @@ public class PepseGameManager extends GameManager {
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
+
         float x = avatar.getCenter().x();
         removeWord(x, this.renderChunk);
-        if (x - this.renderPoint < this.leftRenderEnding) {
-            createWord(this.leftRenderEnding - this.renderChunk, this.leftRenderEnding);
-            this.leftRenderEnding = this.leftRenderEnding - this.renderChunk;
-            this.rightRenderEnding = this.rightRenderEnding - this.renderChunk;
+        float distance = (int) Math.abs((int)x - this.renderPoint);
+        if (x  - this.renderChunk < this.leftRenderEnding) {
+            createWord(this.leftRenderEnding - (int)(distance), this.leftRenderEnding);
+            this.leftRenderEnding = this.leftRenderEnding - (int)(distance);
+            this.rightRenderEnding = this.rightRenderEnding - (int)(distance);
         }
-        if (x + this.renderPoint > this.rightRenderEnding) {
-            createWord(this.rightRenderEnding, this.rightRenderEnding + this.renderChunk);
-            this.leftRenderEnding = this.leftRenderEnding + this.renderChunk;
-            this.rightRenderEnding = this.rightRenderEnding + this.renderChunk;
+        if ( x +  this.renderChunk > this.rightRenderEnding) {
+            createWord(this.rightRenderEnding, this.rightRenderEnding + (int)(distance));
+            this.leftRenderEnding = this.leftRenderEnding + (int)(distance);
+            this.rightRenderEnding = this.rightRenderEnding + (int)(distance);
         }
-        gameObjects().update(deltaTime);
 
     }
 
+    private int roundDown(int start) {
+        if (start < 0){
+            return start - (Block.SIZE + (start % Block.SIZE));
+        }
+        return start - start % Block.SIZE;
+    }
+
+    private int roundUp(int end) {
+        return end + Block.SIZE - (end % Block.SIZE);
+    }
 
     public static void main(String[] args) {
         new PepseGameManager().run();
+
+
     }
 
 }
