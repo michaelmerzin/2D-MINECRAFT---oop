@@ -32,7 +32,7 @@ public class PepseGameManager extends GameManager {
     private static final int LEAVE_LAYER = Layer.BACKGROUND + 14;
     private static final int AVATAR_LAYER = Layer.DEFAULT;
     private static final Color HALO_COLOR = new Color(255, 255, 0, 20);
-    private float renderPoint;
+    private float renderedDistance;
     private int renderChunk;
     private int leftRenderEnding;
     private int rightRenderEnding;
@@ -64,54 +64,15 @@ public class PepseGameManager extends GameManager {
         this.avatar = createAvatar(windowController, inputListener, imageReader);
 
         this.heightAtX = ground::groundHeightAt;
-        this.renderPoint = windowController.getWindowDimensions().x() / 2;
-        this.leftRenderEnding = roundDown((int) (0 - this.renderPoint));
-        this.rightRenderEnding = roundUp((int) (windowController.getWindowDimensions().x() + this.renderPoint));
-        this.renderChunk = roundUp((int) windowController.getWindowDimensions().x());
+        this.renderedDistance =  roundUp((int) windowController.getWindowDimensions().x()) ;
+        this.leftRenderEnding = roundDown((int)(0 - this.renderedDistance / 2));
+        this.rightRenderEnding = roundUp((int) (windowController.getWindowDimensions().x() / 2 + this.renderedDistance));
 
         createWord(leftRenderEnding, rightRenderEnding);
         this.gameObjects().layers().shouldLayersCollide(LEAVE_LAYER, AVATAR_LAYER, true);
         this.gameObjects().layers().shouldLayersCollide(TREE_LAYER, AVATAR_LAYER, true);
-        this.gameObjects().layers().shouldLayersCollide(LEAVE_LAYER, Layer.STATIC_OBJECTS, true);
-        this.gameObjects().layers().shouldLayersCollide(GROUND_LAYER, AVATAR_LAYER, true);
-    }
-
-    /**
-     * @param startX inclusive
-     * @param endX   exclusive
-     */
-    private void createWord(int startX, int endX) {
-
-        this.trees.createInRange(startX, endX);
-        this.ground.createInRange(startX, endX);
-//        Cow.createInRange(this.gameObjects(), AVATAR_LAYER, this.imageReader, startX, endX, this.seed,
-//                this.heightAtX, this.windowController.getWindowDimensions().y());
-
-    }
-
-    /**
-     * @param x the x position of the avatar
-     * @param xOffset offset from x
-     */
-    private void removeWord(float x, float xOffset) {
-        ArrayList<GameObject> removeList = new ArrayList<>();
-        for (GameObject object : this.gameObjects()) {
-            if (object.getTopLeftCorner().x() + object.getDimensions().x() < x - xOffset || object.getTopLeftCorner().x() > x + xOffset) {
-                removeList.add(object);
-            }
-        }
-
-        for (GameObject object : removeList) {
-            if (object.getTag().equals("leaves") )
-               this.gameObjects().removeGameObject(object, LEAVE_LAYER);
-
-            else if (object.getTag().equals("ground")) {
-                this.gameObjects().removeGameObject(object, GROUND_LAYER);
-            }
-                    else if (object.getTag().equals("trunk")) {
-                        this.gameObjects().removeGameObject(object, TREE_LAYER);
-            }
-        }
+        this.gameObjects().layers().shouldLayersCollide(LEAVE_LAYER, GROUND_LAYER, true);
+//        this.gameObjects().layers().shouldLayersCollide(GROUND_LAYER, AVATAR_LAYER, true);
     }
 
     /**
@@ -125,7 +86,7 @@ public class PepseGameManager extends GameManager {
 
         float yOfx = ground.groundHeightAt(windowController.getWindowDimensions().x() / 2);
         Vector2 initialAvatarPos = new Vector2(windowController.getWindowDimensions().x() / 2,
-                windowController.getWindowDimensions().y() - yOfx);
+                windowController.getWindowDimensions().y() - yOfx - Block.SIZE);
         Avatar avatar = Avatar.create(gameObjects(),
                 AVATAR_LAYER, initialAvatarPos, inputListener, imageReader);
         Vector2 relativeVector = initialAvatarPos.add(initialAvatarPos.mult(-1));
@@ -147,34 +108,82 @@ public class PepseGameManager extends GameManager {
     }
 
 
+    /**
+     * @param startX inclusive
+     * @param endX   exclusive
+     */
+    private void createWord(int startX, int endX) {
+
+        this.trees.createInRange(startX, endX);
+        this.ground.createInRange(startX, endX);
+//        Cow.createInRange(this.gameObjects(), AVATAR_LAYER, this.imageReader, startX, endX, this.seed,
+//                this.heightAtX, this.windowController.getWindowDimensions().y());
+
+    }
+
+    /**
+     * @param /x the x position of the avatar
+     * @param /xOffset offset from x
+     */
+    private void removeWord(float leftX, float rightX) {
+        ArrayList<GameObject> removeList = new ArrayList<>();
+        for (GameObject object : this.gameObjects()) {
+            if (object.getTopLeftCorner().x() < leftX ||
+                    object.getTopLeftCorner().x() > rightX) {
+                removeList.add(object);
+            }
+        }
+
+        for (GameObject object : removeList)
+        {
+            if (object.getTag().equals("leaves") )
+               this.gameObjects().removeGameObject(object, LEAVE_LAYER);
+
+            else if (object.getTag().equals("ground")) {
+                this.gameObjects().removeGameObject(object, GROUND_LAYER);
+            }
+            else if (object.getTag().equals("trunk")) {
+                this.gameObjects().removeGameObject(object, TREE_LAYER);
+            }
+        }
+    }
+
+
+
+
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
 
-        float x = avatar.getCenter().x();
-        removeWord(x, this.renderChunk);
-        float distance = (int) Math.abs((int)x - this.renderPoint);
-        if (x  - this.renderChunk < this.leftRenderEnding) {
-            createWord(this.leftRenderEnding - (int)(distance), this.leftRenderEnding);
-            this.leftRenderEnding = this.leftRenderEnding - (int)(distance);
-            this.rightRenderEnding = this.rightRenderEnding - (int)(distance);
-        }
-        if ( x +  this.renderChunk > this.rightRenderEnding) {
-            createWord(this.rightRenderEnding, this.rightRenderEnding + (int)(distance));
-            this.leftRenderEnding = this.leftRenderEnding + (int)(distance);
-            this.rightRenderEnding = this.rightRenderEnding + (int)(distance);
-        }
+        float x = avatar.getTopLeftCorner().x();
 
+        if(x - this.renderedDistance + Block.SIZE < leftRenderEnding)
+        {
+            createWord(leftRenderEnding-Block.SIZE, leftRenderEnding);
+            rightRenderEnding -= Block.SIZE;
+            leftRenderEnding -= Block.SIZE;
+            removeWord(leftRenderEnding, rightRenderEnding);
+        }
+        if(x + this.renderedDistance - Block.SIZE > rightRenderEnding)
+        {
+            createWord(rightRenderEnding, rightRenderEnding + Block.SIZE);
+            rightRenderEnding += Block.SIZE;
+            leftRenderEnding += Block.SIZE;
+            removeWord(leftRenderEnding, rightRenderEnding);
+
+        }
     }
 
     private int roundDown(int start) {
-        if (start < 0){
+        if (start < 0)
             return start - (Block.SIZE + (start % Block.SIZE));
-        }
-        return start - start % Block.SIZE;
+        return start - (start % Block.SIZE);//54 -54%30=30
+
     }
 
     private int roundUp(int end) {
+        if (end < 0)
+            return end - (end % Block.SIZE);
         return end + Block.SIZE - (end % Block.SIZE);
     }
 

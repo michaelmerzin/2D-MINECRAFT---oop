@@ -10,7 +10,7 @@ World package -
 conatain the daynight package and trees package
 in addition it contains Avatar, Block, Cow,Energy , Sky and Terrain classes
 daynight package -
-Night class- the class that make the darkness effect over the screen
+Night - the class that make the darkness effect over the screen
 Sun - the class that make the sun object and  responsible for the sun movement
 SunHalo - the class that make the sun halo effect
 trees package -
@@ -20,7 +20,7 @@ Block - the class that make the block object
 Cow - the class that make the cow object and responsible for the cow movement and the cow animation
 Energy - the class that make the text that represent the energy of the avatar
 Sky - the class that make the sky object
-Terrain - the class that make the terrain . the terrain is made of blocks .
+Terrain - the class that make the terrain. the terrain is made of blocks .
 PepseGameManager- the class that responsible for the game logic and the game flow.
 SimplexNoise - the class that make the noise that used to generate the terrain
 SimplexNoiseOctaved - the class that make the noise that used to generate the terrain

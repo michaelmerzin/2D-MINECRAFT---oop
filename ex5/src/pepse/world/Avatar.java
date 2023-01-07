@@ -94,12 +94,13 @@ public class Avatar extends GameObject {
 
 
     @Override
-    public void update(float deltaTime)
-    {
+    public void update(float deltaTime) {
         super.update(deltaTime);
+        
         if (transform().getVelocity().y() == 0) {
             this.physics().preventIntersectionsFromDirection(Vector2.ZERO);
         }
+        this.physics().preventIntersectionsFromDirection(Vector2.ZERO);
         handleMovement();
     }
 
@@ -151,19 +152,26 @@ public class Avatar extends GameObject {
         }
     }
 
-    public boolean shouldCollideWith(GameObject other) {
-        if(other instanceof Block)
-        {
-            return true ;
-        }
-        return true;
-    }
+//    public boolean shouldCollideWith(GameObject other) {
+//        if(other instanceof Block)
+//        {
+//            return true ;
+//        }
+//        return true;
+//    }
 
-    @Override
+//    @Override
     public void onCollisionEnter(GameObject other, Collision collision) {
 
-        if (other.getTag().equals("ground")) {
-            this.setVelocity(Vector2.ZERO);
+        if (other.getTag().equals("ground")||other.getTag().equals("leaves")) {
+            if(this.transform().getVelocity().y()!=0) {
+                this.transform().setVelocityY(0);
+                this.transform().setAccelerationY(0);
+//                this.setCenter(new Vector2(getCenter().x(),other.getCenter().y()+other.getTopLeftCorner().y()));
+            }
+            this.transform().setVelocityY(0);
+
+
         }
     }
 
