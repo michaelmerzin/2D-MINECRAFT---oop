@@ -17,12 +17,12 @@ public class Night {
     private static final Float MID_NIGHT_OPACITY = 0.5f;
 
     /**
-     *  Creates a new night sky
-     * @param gameObjects The game objects collection
-     * @param Layer The layer of the night sky
-     * @param windowDimensions The dimensions of the window
-     * @param cycleLength The length of the cycle
-     * @return The night sky
+     * create the night sky as the most top layer with a fade in-out effect
+     * @param gameObjects the game object collection
+     * @param Layer the layer of the night sky
+     * @param windowDimensions the window dimensions
+     * @param cycleLength the length of the day-night cycle
+     * @return night game object
      */
     public static GameObject create(GameObjectCollection gameObjects, int Layer,
                                     Vector2 windowDimensions, float cycleLength) {
@@ -34,8 +34,8 @@ public class Night {
         return Darkness;
     }
     /**
-     * Fades out the night sky
-     * @param Darkness The night sky
+     * Fades in-out the night sky
+     * @param Darkness The night sky game object
      * @param cycleLength The length of the cycle
      */
     private static void fadeOut(GameObject Darkness, float cycleLength){

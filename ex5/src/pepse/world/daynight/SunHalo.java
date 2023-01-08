@@ -13,12 +13,12 @@ public class SunHalo {
     private static final float HALO_RADIO= 1.25f;
 
     /**
-     * Creates a new sun halo
+     * create a halo object around the sub object
      * @param gameObjects The game objects collection
-     * @param Layer The layer of the sun halo
-     * @param windowDimensions The dimensions of the window
-     * @param cycleLength The length of the cycle
-     * @return The sun halo
+     * @param Layer the layer of the halo
+     * @param sun the sub object to track
+     * @param color the color of the halo
+     * @return the halo object
      */
     public static GameObject create(GameObjectCollection gameObjects, int Layer,GameObject sun,Color color) {
         GameObject halo = new GameObject(Vector2.ZERO, sun.getDimensions().mult(HALO_RADIO), new OvalRenderable(color));

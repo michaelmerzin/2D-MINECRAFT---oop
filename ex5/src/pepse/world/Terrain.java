@@ -1,28 +1,22 @@
 package pepse.world;
 
 import danogl.collisions.GameObjectCollection;
-import danogl.collisions.Layer;
-import danogl.gui.ImageReader;
-import danogl.gui.rendering.ImageRenderable;
 import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 import pepse.SimplexNoise;
-import pepse.SimplexNoiseOctave;
+
 
 import java.awt.*;
 
 public class Terrain {
-    private static final Color BASE_GROUND_COLOR = new Color(212, 123, 73);
-    private static final String GRASS_IMAGE = "animation/grass.png";
-    private static final String DIRT_IMAGE = "animation/dirt.jpg";
-    private static final double GROUND_RADIO = 0.3;
+
+
     private static final int TERRAIN_DEPTH = 20;
     private static final String BLOCK_TAG = "ground";
     private static final double NOISE_PERSISTENCE = 2.1 ;
     private final GameObjectCollection gameObjects;
     private final int groundLayer;
-    private final float groundHeightAtX0;
     private static final Color COLOR_OF_LEAVES = new Color(0, 102, 0);
     private static final Color COLOR_OF_TREE = new Color(100, 50, 20);
     private static final RectangleRenderable renderDirt = new RectangleRenderable(COLOR_OF_TREE);
@@ -39,10 +33,9 @@ public class Terrain {
      * @param seed The seed for the terrain
      */
     public Terrain(GameObjectCollection gameObjects, int groundLayer, Vector2 windowDimensions,
-                   int seed, ImageReader imageReader) {
+                   int seed) {
         this.groundLayer = groundLayer;
         this.gameObjects = gameObjects;
-        this.groundHeightAtX0 = (float) (windowDimensions.y() * GROUND_RADIO);
         this.height = windowDimensions.y();
         this.seed = seed;
         this.noise = new SimplexNoise(TERRAIN_DEPTH, NOISE_PERSISTENCE, seed);
@@ -55,7 +48,7 @@ public class Terrain {
     }
 
     /**
-     * Creates a new terrain
+     * Creates a new terrain with the given seed using noise method to generate the terrain
      * @param minX The minimum x coordinate
      * @param maxX The maximum x coordinate
      */
@@ -84,15 +77,31 @@ public class Terrain {
         }
     }
 
+    /**
+     * the highest y coordinate of the terrain
+     * @param x the x coordinate
+     * @return y coordinate
+     */
     private int calcTopY(int x) {
         return (int) (Math.floor(groundHeightAt(x) / Block.SIZE) * Block.SIZE);
     }
 
+
+    /**
+     * calculates the start x coordinate
+     * @param start number to calculate by
+     * @return round down to the nearest multiple of block size
+     */
     private int calcStart(int start) {
         return start - (start % Block.SIZE);
 
     }
 
+    /**
+     * calculates the start x coordinate
+     * @param end number to calculate by
+     * @return round up to the nearest multiple of block size
+     */
     private int calcEnd(int end) {
         return end + Block.SIZE - (end % Block.SIZE);
     }

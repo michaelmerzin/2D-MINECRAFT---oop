@@ -1,0 +1,116 @@
+michaelmerzin
+sean_cherny
+
+
+=============================
+=      File description     =
+=============================
+World package -
+contain the daylight package and trees package
+in addition it contains Avatar, Block, Cow,Energy , Sky and Terrain classes
+daylight package -
+Night - the class that make the darkness effect over the screen
+Sun - the class that make the sun object and  responsible for the sun movement
+SunHalo - the class that make the sun halo effect
+trees package -
+Tree - the class that make the tree object
+Avatar - the class that make the avatar object and responsible for the avatar movement and the avatar assets
+Block - the class that make the block object
+Energy - the class that make the text that represent the energy of the avatar
+Sky - the class that make the sky object
+Terrain - the class that make the terrain. the terrain is made of blocks .
+PepseGameManager- the class that responsible for the game logic and the game flow.
+SimplexNoise - the class that make the noise that used to generate the terrain
+SimplexNoiseOctave - the class that make the noise that used to generate the terrain
+
+
+=============================
+=    Answers to questions   =
+=============================
+the difference between the UMLs are:
+the first uml is much smaller and then the second uml, in addition the first uml is much less specific.
+at the beginning we didn't know how to make the terrain and the trees work ,the question was how we know
+in which height to put the trees and how to make the terrain look good.
+so we decided to work with callback functions that will be called when we need to get the height of the terrain.
+the callback we used called groundHeightAtX. the callback get the x and return the height.
+instead of be dependent on the terrain object and broke the Encapsulation principle.
+all the other classes are the same.
+so as you can see we  implemented our project with Object Oriented Design  principles and functional Design principles.
+in the functional design we used the callback function that we mentioned above.
+in the object-oriented design we used the Encapsulation principle and the Single Responsibility principle.
+
+
+
+a const named renderedDistance is used to determine the distance of the blocks that will be rendered.
+The value is set to screen width. because the viewing distance is precisely half of
+hte screen width for each direction, at every frame twice then the viewing distance
+is rendered at each direction. creating the illusion of infinite map.
+if x is the x coordinate of the avatar, and leftX is x - renderedDistance and rightX is x + renderedDistance,
+then the blocks that will be rendered are the blocks that their x coordinate is between leftX and eightX.
+new world parts is created using the createWord method. the createWord method is called when the avatar
+is moving and the new world parts that will be rendered are not created yet.
+the createWord method is called with the leftX and rightX parameters, which calls the
+createInRange methods of the trees, ground with the same parameters.
+the creation of parts in createInRange is randomized. in order to keep the same object in the same place,
+the random seed is calculated using the x coordinate of the block.
+Every block which x not between the range of leftX and rightX is removed from the world. the remove method is
+necessary to keep the mempry usage at a reasonable level.
+
+
+the tree class - the tree class is responsible for the tree object.
+the tree class contains a static method create that creates a new tree and adds it to a GameObjectCollection.
+the create method is called with the following parameters:
+gameObjects: The GameObjectCollection to add the tree to.
+Layer: The layer of the tree in the GameObjectCollection.
+position: The position of the tree as a Vector2.
+scale: The scale of the tree as a Vector2.
+the create method returns the created tree as a GameObject.
+in the class we have a public function that called createInRange
+that create trees in the range of the  coordinates.
+the createInRange method is called with the following parameters:
+leftX: The left x coordinate of the range.
+rightX: The right x coordinate of the range.
+all the other functions are private. we tried to keep the api as simple as possible.
+in the implementation we used the random function to create the trees in random places.
+in the implementation of the leaves we used ScheduledTask to make the leaves move.
+the leaves move in a random direction and the leaves move in a random speed.
+in the  scheduledTask we anonymous class that implements Runnable.
+rotateLeave is the function that responsible for the leaves rotation.
+in this class we used Transition that uses a callback function to change the leaves Angle.
+the leaves Angle is changed in the callback function.
+we chose to use the callback and Anonymous classes in the implementation of the leaves and tree because
+we wanted to keep the code simple, and we didn't want to create a new class for the leaves and the tree.
+in addition we thought that it will be more safe to use the callback function instead of be dependent
+on the tree object.
+
+
+some of our dilemmas were:
+1.implement different mechanism for different parts of the different objects, for example, the leaves of the tree
+  are implemented using a ScheduledTask, while the tree itself is implemented using a Transition.
+  we decided to use the ScheduledTask and the Transition because we wanted to keep the code simple.
+2. we wanted to make the leaves move in a random direction and in a random speed.
+   we decided to use the ScheduledTask and the Transition because we wanted to keep the code simple.
+3. design the project to maintain the object oriented design principles and the functional design principles.
+4. encapsulate the code in the classes and keep the classes not dependent in each other.
+5. design , make everything beautiful and make the game fun to play.
+
+
+the bonuses :
+Energy - we implemented is the energy bar.
+we crated a class that called Energy that responsible for the energy bar.
+it contains a static method create that creates a new energy bar and a representation of the energy count
+on the screen.
+
+Avatar movement and texture , Avatar - we made images of steve from minecraft that walks to every side and
+flies.
+
+terrain design - we made the terrain more beautiful and realistic. with grass on the surface and dirt under it.
+
+
+
+
+
+
+
+
+

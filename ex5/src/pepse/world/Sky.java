@@ -13,8 +13,8 @@ public class Sky {
     /**
      * Creates a new sky
      * @param gameObjects The game objects collection
-     * @param Layer The layer of the sky
      * @param windowDimensions The dimensions of the window
+     * @param skyLayer The layer of the sky
      * @return The sky
      */
     public static GameObject create(GameObjectCollection gameObjects, Vector2 windowDimensions, int skyLayer) {

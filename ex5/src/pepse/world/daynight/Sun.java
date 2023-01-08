@@ -17,13 +17,14 @@ public class Sun {
     private static final float SUN_RADIUS=375;
     private static final float SUN_HEIGHT=150;
     private static final float SUN_ROTATION = (float) (2*Math.PI);
+
     /**
-     * Creates a new sun
+     * Creates a new sun object which rotates around the world
      * @param gameObjects The game objects collection
      * @param Layer The layer of the sun
      * @param windowDimensions The dimensions of the window
      * @param cycleLength The length of the cycle
-     * @return The sun
+     * @return game object of the sun
      */
     public static GameObject create(GameObjectCollection gameObjects, int Layer,
                                     Vector2 windowDimensions, float cycleLength) {
@@ -39,14 +40,14 @@ public class Sun {
 
     }
     /**
-     * Rotates the sun
+     * Rotates the sun in a ellipse motion around the world
      * @param sun The sun
      * @param windowDimensions The dimensions of the window
      * @param cycleLength The length of the cycle
      */
     private static void rotateSun(GameObject sun, Vector2 windowDimensions, float cycleLength){
         Consumer<Float> sunVector=(angel)->
-                sun.setCenter(windowDimensions.mult(0.5f).add(calcSunPosition(windowDimensions,angel)));
+                sun.setCenter(windowDimensions.mult(0.5f).add(calcSunPosition(angel)));
 
         Transition<Float> transitionForDarkness = new Transition<Float>(sun,sunVector,
                 (float)(-Math.PI/2),
@@ -57,11 +58,10 @@ public class Sun {
     }
     /**
      * Calculates the position of the sun
-     * @param windowDimensions The dimensions of the window
      * @param angel The angel of the sun
      * @return The position of the sun
      */
-    private static Vector2 calcSunPosition(Vector2 windowDimensions,float angel)
+    private static Vector2 calcSunPosition(float angel)
     {
         float x = (float) (SUN_RADIUS*1.5*Math.cos(angel));
         float y = (float) (SUN_RADIUS*Math.sin(angel));

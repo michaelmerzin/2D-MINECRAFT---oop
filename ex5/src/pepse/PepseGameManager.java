@@ -17,7 +17,9 @@ import pepse.world.trees.Tree;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Function;
 
 public class PepseGameManager extends GameManager {
@@ -33,7 +35,6 @@ public class PepseGameManager extends GameManager {
     private static final int AVATAR_LAYER = Layer.DEFAULT;
     private static final Color HALO_COLOR = new Color(255, 255, 0, 20);
     private float renderedDistance;
-    private int renderChunk;
     private int leftRenderEnding;
     private int rightRenderEnding;
     private Terrain ground;
@@ -43,6 +44,7 @@ public class PepseGameManager extends GameManager {
     private int seed;
     private Function<Float, Float> heightAtX;
     private WindowController windowController;
+    private static final Set<GameObject> removeSet = new HashSet<>();
 
     @Override
     public void initializeGame(ImageReader imageReader,
@@ -57,8 +59,7 @@ public class PepseGameManager extends GameManager {
         this.windowController = windowController;
         this.imageReader = imageReader;
         this.seed = 9; //TODO
-        this.ground = new Terrain(gameObjects(), GROUND_LAYER, windowController.getWindowDimensions(),
-                seed, imageReader);
+        this.ground = new Terrain(gameObjects(), GROUND_LAYER, windowController.getWindowDimensions(),  seed);
         this.trees = new Tree(gameObjects(), TREE_LAYER, LEAVE_LAYER,
                 windowController.getWindowDimensions(), ground::groundHeightAt, seed);
         this.avatar = createAvatar(windowController, inputListener, imageReader);
@@ -72,7 +73,6 @@ public class PepseGameManager extends GameManager {
         this.gameObjects().layers().shouldLayersCollide(LEAVE_LAYER, AVATAR_LAYER, true);
         this.gameObjects().layers().shouldLayersCollide(TREE_LAYER, AVATAR_LAYER, true);
         this.gameObjects().layers().shouldLayersCollide(LEAVE_LAYER, GROUND_LAYER, true);
-//        this.gameObjects().layers().shouldLayersCollide(GROUND_LAYER, AVATAR_LAYER, true);
     }
 
     /**
@@ -113,28 +113,25 @@ public class PepseGameManager extends GameManager {
      * @param endX   exclusive
      */
     private void createWord(int startX, int endX) {
-
         this.trees.createInRange(startX, endX);
         this.ground.createInRange(startX, endX);
-//        Cow.createInRange(this.gameObjects(), AVATAR_LAYER, this.imageReader, startX, endX, this.seed,
-//                this.heightAtX, this.windowController.getWindowDimensions().y());
-
     }
 
     /**
-     * @param /x the x position of the avatar
-     * @param /xOffset offset from x
+     * remove all the object that are out of range
+     * @param leftX the left most x
+     * @param rightX the right most x
      */
     private void removeWord(float leftX, float rightX) {
-        ArrayList<GameObject> removeList = new ArrayList<>();
+
         for (GameObject object : this.gameObjects()) {
             if (object.getTopLeftCorner().x() < leftX ||
                     object.getTopLeftCorner().x() > rightX) {
-                removeList.add(object);
+                removeSet.add(object);
             }
         }
 
-        for (GameObject object : removeList)
+        for (GameObject object : removeSet)
         {
             if (object.getTag().equals("leaves") )
                this.gameObjects().removeGameObject(object, LEAVE_LAYER);
@@ -144,6 +141,7 @@ public class PepseGameManager extends GameManager {
             }
             else if (object.getTag().equals("trunk")) {
                 this.gameObjects().removeGameObject(object, TREE_LAYER);
+                Tree.treesXcords.remove((int)object.getTopLeftCorner().x());
             }
         }
     }
@@ -174,6 +172,11 @@ public class PepseGameManager extends GameManager {
         }
     }
 
+    /**
+     * round down the number to the BLOCK_SIZE
+     * @param start the number to round down
+     * @return the rounded number
+     */
     private int roundDown(int start) {
         if (start < 0)
             return start - (Block.SIZE + (start % Block.SIZE));
@@ -181,6 +184,11 @@ public class PepseGameManager extends GameManager {
 
     }
 
+    /**
+     * round up the number to the BLOCK_SIZE
+     * @param end the number to round up
+     * @return the rounded number
+     */
     private int roundUp(int end) {
         if (end < 0)
             return end - (end % Block.SIZE);
